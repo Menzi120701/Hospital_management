@@ -53,6 +53,9 @@ const form = useForm({
     doctor_id: props.patient.doctor_id
 });
 
+
+console.log("here")
+
 const errors = computed(() => form.errors);
 
 const submit = () => {
