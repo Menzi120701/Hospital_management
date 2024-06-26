@@ -15,23 +15,33 @@ import {
     ComboboxOption,
 } from "@headlessui/vue";
 
-const people = [
-    { id: 1, name: "Durward Reynolds" },
-    { id: 2, name: "Kenton Towne" },
-    { id: 3, name: "Therese Wunsch" },
-    { id: 4, name: "Benedict Kessler" },
-    { id: 5, name: "Katelyn Rohan" },
-];
+// // const people = [
+// //     { id: 1, name: "Durward Reynolds" },
+// //     { id: 2, name: "Kenton Towne" },
+// //     { id: 3, name: "Therese Wunsch" },
+// //     { id: 4, name: "Benedict Kessler" },
+// //     { id: 5, name: "Katelyn Rohan" },
+// ];
 import { CheckIcon } from "@heroicons/vue/24/outline";
 let selected = ref([]);
 const query = ref("");
 
-const props = defineProps(["patientinfo", "doctorinfo"]);
+const props = defineProps(["patientinfo", "doctorinfo","medical_conditions"]);
 let filteredPeople = computed(() =>
     query.value === ""
         ? props.doctorinfo
         : props.doctorinfo.filter((person) =>
               person.name
+                  .toLowerCase()
+                  .replace(/\s+/g, "")
+                  .includes(query.value.toLowerCase().replace(/\s+/g, ""))
+          )
+);
+let filteredDiseases = computed(() =>
+    query.value === ""
+        ? props.medical_conditions
+        : props.medical_conditions.filter((medical_condition) =>
+              medical_condition.medical_condition
                   .toLowerCase()
                   .replace(/\s+/g, "")
                   .includes(query.value.toLowerCase().replace(/\s+/g, ""))
@@ -45,11 +55,14 @@ const form = useForm({
     contact_no: "",
     doctor_id: "",
     doctors: [],
+    medical_conditions:[],
+
 });
 
 function submit() {
     console.log("submit");
     form.doctors = form.doctors.map((e) => e.id);
+    form.medical_conditions = form.medical_conditions.map((e) => e.id);
 
     form.post(
         route("patient.store"),
@@ -199,7 +212,7 @@ function submit() {
                         </div>
                     </Combobox>
                 </div>
-                <div class="col-start-1">
+                <!-- <div class="col-start-1">
                 <InputLabel value="Medical Conditions"/>
                     <textarea
                         v-model="form.medical_condition"
@@ -208,6 +221,97 @@ function submit() {
                         rows="3" 
                         class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm resize-none w-full"
                     />
+                </div> -->
+                <div>
+                    <InputLabel value="Select Diseases" />
+                    <Combobox v-model="form.medical_conditions" multiple>
+                        <div class="relative">
+                            <div
+                                class="relative w-full cursor-default rounded-lg bg-white text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300 sm:text-sm"
+                            >
+                                <ComboboxInput
+                                    class="border-gray-300 focus:border-indigo-500 
+                                    h-8 focus:ring-indigo-500 rounded-md shadow-sm w-full"
+                                    :displayValue="(medical_condition) => medical_condition.medical_condition"
+                                    @change="query = $event.target.value"
+                                />
+                                <ComboboxButton
+                                    class="absolute inset-y-0 right-0 flex items-center pr-2"
+                                >
+                                    <ChevronUpDownIcon
+                                        class="h-5 w-5 text-gray-400"
+                                        aria-hidden="true"
+                                    />
+                                </ComboboxButton>
+                            </div>
+                            <TransitionRoot
+                                leave="transition ease-in duration-100"
+                                leaveFrom="opacity-100"
+                                leaveTo="opacity-0"
+                                @after-leave="query = ''"
+                            >
+                                <ComboboxOptions
+                                    class="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm"
+                                >
+                                    <div
+                                        v-if="
+                                            filteredDiseases.length === 0 &&
+                                            query !== ''
+                                        "
+                                        class="relative cursor-default select-none px-4 py-2 text-gray-700"
+                                    >
+                                        Nothing found.
+                                    </div>
+
+                                    <ComboboxOption
+                                        v-for="person in filteredDiseases"
+                                        as="template"
+                                        :key="medical_condition.id"
+                                        :value="medical_condition"
+                                        v-slot="{ selected, active }"
+                                    >
+                                        <li
+                                            class="relative cursor-default select-none py-2 pl-10 pr-4"
+                                            :class="{
+                                                'bg-teal-600 text-white':
+                                                    active,
+                                                'text-gray-900': !active,
+                                            }"
+                                        >
+                                            <span
+                                                class="block truncate"
+                                                :class="{
+                                                    'font-medium': selected,
+                                                    'font-normal': !selected,
+                                                }"
+                                            >
+                                                {{ medical_condition.name }}
+                                            </span>
+                                            <span
+                                                v-if="
+                                                    form.medical_conditions
+                                                        .map((e) => e.id)
+                                                        .includes(person.id)
+                                                "
+                                                class="absolute inset-y-0 left-0 flex items-center pl-3"
+                                                :class="{
+                                                    'text-white': form.medical_conditions
+                                                        .map((e) => e.id)
+                                                        .includes(medical_condition.id),
+                                                    'text-slate-900': !active,
+                                                }"
+                                            >
+                                                <CheckIcon
+                                                    class="h-5 w-5"
+                                                    aria-hidden="true"
+                                                />
+                                            </span>
+                                        </li>
+                                    </ComboboxOption>
+                                </ComboboxOptions>
+                            </TransitionRoot>
+                        </div>
+                    </Combobox>
                 </div>
                
 

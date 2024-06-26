@@ -47,6 +47,9 @@ const showingNavigationDropdown = ref(false);
                                 <NavLink :href="route('patient.index')" :active="route().current('patient.index')">
                                     patient
                                 </NavLink>
+                                 <NavLink :href="route('medical_condition.index')" :active="route().current('patient.index')">
+                                    Medical Condition
+                                </NavLink>
                             </div>
                         </div>
 
@@ -147,6 +150,9 @@ const showingNavigationDropdown = ref(false);
                         </ResponsiveNavLink>
                         <ResponsiveNavLink :href="route('patient.index')" :active="route().current('patient.index')">
                             patient
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink :href="route('medical_condition.index')" :active="route().current('patient.index')">
+                            Medical Condition
                         </ResponsiveNavLink>
                     </div>
 

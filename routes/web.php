@@ -7,6 +7,7 @@ use Inertia\Inertia;
 use App\Http\Controllers\ChirpController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\DoctorController;
+use App\Http\Controllers\MedicalConditionController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\PatientController;
@@ -50,6 +51,9 @@ Route::resource('department', DepartmentController::class)
 ->only(['index', 'store', 'update', 'destroy'])
     ->middleware(['auth', 'verified']);
     Route::resource('patient', PatientController::class)
+->only(['index', 'store', 'update', 'destroy'])
+    ->middleware(['auth', 'verified']);
+    Route::resource('medical_condition', MedicalConditionController::class)
 ->only(['index', 'store', 'update', 'destroy'])
     ->middleware(['auth', 'verified']);
 

@@ -6,6 +6,7 @@ use App\Models\Patient;
 
 use App\Http\Controllers\Controller;
 use App\Models\Doctor;
+use App\Models\Medical_Condition;
 use GuzzleHttp\Promise\Create;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -21,7 +22,8 @@ class PatientController extends Controller
         return Inertia::render('Patient/Index',
         [
             'patientinfo'=>Patient::with('doctors')->latest()->get(),
-            'doctorinfo'=>Doctor::get()
+            'doctorinfo'=>Doctor::get(),
+            'medical_conditions'=>Medical_Condition::get()
         ]);
     }
 
